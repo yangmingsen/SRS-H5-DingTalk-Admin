@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "target": "es6",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@esr/*": ["node_modules/@esr/*"],
+      "@galaplat/*": ["node_modules/@galaplat/*"]
+    }
+  },
+  "include": ["./src/**/*", "node_modules/@esr/gp-plugin/**/*"],
+  "exclude": ["node_modules"]
+}
