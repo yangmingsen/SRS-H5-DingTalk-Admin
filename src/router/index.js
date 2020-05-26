@@ -12,7 +12,7 @@ const autoLoadBlackList = [
 const onlyRoutes = []
 var router = new Router({
   mode: 'history',
-  base: '/srs/',
+    base: '/srs/',
   routes: [
     {path: '/:sysCode(\\w+)/',
       component: resolve => require(['@galaplat/modules-my-iframe'], resolve),
