@@ -2,7 +2,7 @@ import { getServerConfig } from '@galaplat/utils/lib/common/service'
 const config = getServerConfig()
 // 开发环境，重新调整服务地址
 if (config.env === 'DEV') {
-  config.server = 'localhost:8080/'
+  config.server = '192.168.17.221:8080/'
 }
 window.__ENV = config.env
 

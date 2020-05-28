@@ -3,19 +3,9 @@
     <el-container>
       <el-aside class="slide">
         <div class="floor">
-          <div class="floor-msg active-bg">
-            10B第五层
+          <div v-for="item in floorListData" class="floor-msg" :class="getSilderSty(item.code)" @click="whenUserClickTheFloorButton(item.code)">
+            {{item.name}}
           </div>
-          <div class="floor-msg">
-            10B第六层
-          </div>
-          <div class="floor-msg">
-            10B第七层
-          </div>
-          <div class="floor-msg">
-            13B第五层
-          </div>
-
         </div>
       </el-aside>
       <el-container>
@@ -34,9 +24,54 @@
             </div>
 
             <div class="header-right">
-              <a class="header-right-bt">开始编辑</a>
-              <a class="header-right-bt">更改</a>
+              <a class="header-right-bt" @click="whenUserClickTheEditButton()">{{editSeatHintMsg}}</a>
+              <a class="header-right-bt" @click="whenUserClickTheUpdateButton()">更改</a>
             </div>
+
+            <el-dialog
+              title="提示"
+              :visible.sync="dialogVisible"
+              width="20%"
+              :before-close="handleClose"
+              class="my-dialog-sty"
+            >
+                <span>
+                 <div class="choosesty" >
+                   更改座位类别
+                  <el-select class="choosesty-opt"  v-model="curSelectSeats.typeCode" placeholder="请选择座位类别">
+                      <el-option
+                        v-for="item in seatCategoryInfos"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                  </el-select>
+                 </div>
+                  <span v-if="dialogHint.ctge" class="my-dialog-hit">请选择座位类别</span>
+
+                  <div class="clear choosesty" >
+                   更改所属部门
+                  <el-select  class="choosesty-opt" :disabled="disableTheSelectDept"  v-model="curSelectSeats.departmentCode" :placeholder="disableTheSelectDeptShowMsg">
+                      <el-option
+                        v-for="item in deptInfos"
+                        :key="item.code"
+                        :label="item.name"
+                        :value="item.code"
+
+                      >
+                      </el-option>
+                  </el-select>
+                 </div>
+                  <span v-if="dialogHint.dept" class="my-dialog-hit clear">请选择所属部门</span>
+
+
+                </span>
+                <span slot="footer" class="dialog-footer" >
+                  <el-button @click="dialogVisible = false">取 消</el-button>
+                  <el-button type="primary" @click="whenUserClickTheDialogSaveButton()">确 定</el-button>
+                </span>
+            </el-dialog>
+
           </div>
           <div class="body-content">
             <div class="body-content-left">
@@ -55,25 +90,37 @@
             <div class="body-content-right">
               <div class="chooseseat">
                 <div v-if="floorSelect == 1" class="chooseseat-floor choosearea-10B5">
-                  <div v-for="item in seatBaseInfo10b5" :index="item.code" class="user-seat" :class="getTmpRate(item)" :style="getTmpSty(item)" ></div>
+                  <div v-for="item in seatBaseInfo10b5" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)"
+                       @click="whenUserClickTheSeat(item)" >
+                    <el-popover
+                      v-if="editSeat == false"
+                      placement="right"
+                      title="预订人信息"
+                      width="80"
+                      trigger="click"
+                      :content="seatReservedHintInfo">
+                      <div class="popover-space" style="width:100%;height:100%;" slot="reference">&nbsp;</div>
+                    </el-popover>
+                  </div>
                 </div>
 
                 <div v-if="floorSelect == 2" class="chooseseat-floor choosearea-10B6">
-                  <div v-for="item in seatBaseInfo10b6" :index="item.code" class="user-seat" :class="getTmpRate(item)" :style="getTmpSty(item)" ></div>
+                  <div v-for="item in seatBaseInfo10b6" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" ></div>
                 </div>
 
                 <div v-if="floorSelect == 3" class="chooseseat-floor choosearea-10B7">
-                  <div v-for="item in seatBaseInfo10b7" :index="item.code" class="user-seat" :class="getTmpRate(item)" :style="getTmpSty(item)" ></div>
+                  <div v-for="item in seatBaseInfo10b7" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" ></div>
                 </div>
 
                 <div v-if="floorSelect == 4" class="chooseseat-floor choosearea-13B5">
-                  <div v-for="item in seatBaseInfo13b5" :index="item.code" class="user-seat" :class="getTmpRate(item)" :style="getTmpSty(item)" ></div>
+                  <div v-for="item in seatBaseInfo13b5" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" ></div>
                 </div>
 
               </div>
             </div>
           </div>
         </el-main>
+
       </el-container>
     </el-container>
   </div>
@@ -81,13 +128,18 @@
 
 <script>
 import cache from '@galaplat/utils/lib/mixins/cache'
+import http from '@galaplat/utils/lib/common/service'
+import {ymsUtil} from '../../api/yUtils'
+import {eleMessage} from '../../api/eleMessage'
+import {pcApi} from '../../api/pcApi'
 export default {
   name: 'booking-seat',
   mixins: [cache],
   data() {
+
     return {
-      filterDate: "2020-05-03",
-      floorSelect:3, //1=5, 2=6, 3=7 4=13b5
+      filterDate: ymsUtil.fmtDate(new Date),
+      floorSelect:"1", //1=5, 2=6, 3=7 4=13b5
       deptInfos: [
         {
           "code": "212788513",
@@ -134,6 +186,24 @@ export default {
           "name": "内控中心"
         }
       ],
+      seatCategoryInfos:[
+        {
+          value: '0',
+          label: '灵活座位'
+        }, {
+          value: '1',
+          label: '固定座位'
+        }, {
+          value: '2',
+          label: '公共座位'
+        }
+      ],
+      floorListData: [
+        {"code": "001", "name": "10B第五层"},
+        {"code": "002", "name": "10B第六层"},
+        {"code": "003", "name": "10B第七层"},
+        {"code": "004", "name": "13B第五层"},
+      ], //所有楼层数
       floorData: [
         {"code":"001", "no":"A001", "typeCode":0,"departmentCode":"312586851"},
         {"code":"002", "no":"A002", "typeCode":2,"departmentCode":"312586851"},
@@ -270,8 +340,25 @@ export default {
         {"code":"133", "no":"A133", "typeCode":1,"departmentCode":"69891083"},
         {"code":"134", "no":"A134", "typeCode":1,"departmentCode":"69891083"},
         {"code":"135", "no":"A135", "typeCode":2,"departmentCode":"69891083"}
-      ],
+      ], //某个楼层具体数据
+      editSeat: false, //是否开始编辑
+      editSeatHintMsg: "开始编辑",
+      seatReservedHintInfo:"033-杨铭森-流程IT中心",
+      dialogVisible: false,
+      disableTheSelectDept: false,
+      disableTheSelectDeptShowMsg: "请选择座位类别",
 
+      curSelectSeats: { //提交data
+        codes:[],
+        typeCode: "",
+        departmentCode: ""
+      },
+      dialogHint: {
+        ctge: false,
+        dept: false
+      },
+
+      //10b5楼座位样式数据 static
       seatBaseInfo10b5: [
         //第一层
         {code: '041', class: 'rotate90', top: '1%', left: '3%'},
@@ -326,9 +413,9 @@ export default {
         {code: '010', class: 'rotate90', top: '21.5%', left: '58.5%'},
         {code: '011', class: 'rotate90', top: '27.1%', left: '58.5%'},
         {code: '012', class: 'rotate90', top: '32.7%', left: '58.5%'},
-        {code: '004', class: 'rotate270', top: '21.5%', left: '68.8%'},
-        {code: '005', class: 'rotate270', top: '27.1%', left: '68.8%'},
-        {code: '006', class: 'rotate270', top: '32.7%', left: '68.8%'},
+        {code: '004', class: 'rotate270', top: '21.5%', left: '66.8%'},
+        {code: '005', class: 'rotate270', top: '27.1%', left: '66.8%'},
+        {code: '006', class: 'rotate270', top: '32.7%', left: '66.8%'},
 
 
         //第三层
@@ -607,7 +694,6 @@ export default {
 
 
       ],
-
       //10b7楼座位样式数据 static
       seatBaseInfo10b7:[
 
@@ -739,7 +825,6 @@ export default {
 
 
       ],
-
       //10b7楼座位样式数据 static
       seatBaseInfo13b5:[
         {code: '386', class: 'rotate180', top: '15.7%', left: '20.2%'},
@@ -865,40 +950,368 @@ export default {
 
       ],
       //end of 基础数据
-
     }
   },
   methods: {
 
-    getTmpSty(item) {
-      return {backgroundImage: `url('/srs/static/status/58476173-0.png')`,
-        top: item.top,
-        left: item.left
-      };
+    getSilderSty(id){
+      return {
+        'active-bg': this.floorSelect == id
+      }
+
     },
 
-    getTmpRate(item) {
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done();
+        })
+        .catch(_ => {});
+    },
+
+    getRateSty(item) {
       var classes = {}
       classes[item.class] = true;
         return classes;
     },
-
     getDeptSty(dept_id) {
-
       return {backgroundImage: `url('/srs/static/status/${dept_id}-0.png')`};
     },
-    getSeatSty(seat_code) {
-      //如果已选中，则赋固定的背景图
-      //如果未选中，则根据seat-code获取座位信息，取typeCode=0和departmentCode=0001
-      //拼接图片信息，0001-0
-      return {backgroundImage: `url('/srs/static/status/0001-0.png')`};
+    getSeatSty(item) {
+      const that = this;
+      let code = item.code;
+
+      let seat = that.getSeatInfo(code);
+
+      let codes = that.curSelectSeats.codes;
+
+      let is = false;
+      let bgcUrl = null;
+
+      for(let i=0; i<codes.length; i++) {
+        if (item.code == codes[i]) {
+          bgcUrl = "/srs/static/status/icon_select.png";
+          is = true;
+          break;
+        }
+      }
+
+      if (!is) {
+        if (seat.typeCode == 2) {
+          bgcUrl='/srs/static/status/web_public-seat.png';
+        }  else {
+          bgcUrl = '/srs/static/status/'+seat.departmentCode+'-'+seat.typeCode+'.png';
+        }
+      }
+
+      let obj = {
+        backgroundImage: `url('${bgcUrl}')`,
+        top: item.top,
+        left: item.left
+      }
+      return obj;
+    },
+
+    getSeatInfo(code) {
+      const that = this;
+      for(let i=0; i<that.floorData.length; i++) {
+        let tSeat = that.floorData[i];
+        if (tSeat.code == code) {
+          return tSeat;
+        }
+      }
+    },
+
+    checkHint() {
+      const that = this;
+      that.dialogHint.ctge = false;
+      that.dialogHint.dept = false;
+      let res = true;
+
+      if (that.dialogVisible) {
+        if (that.curSelectSeats.typeCode == "") {
+          that.dialogHint.ctge = true;
+          res = false;
+        }
+        if (that.curSelectSeats.departmentCode == "" && that.curSelectSeats.typeCode != "2") {
+          that.dialogHint.dept = true;
+          res = false;
+        }
+      }
+      return res;
+    },
+
+    clearSelectSeatsData() {
+      const that = this;
+      that.curSelectSeats.codes=[];
+      that.curSelectSeats.typeCode="";
+      that.curSelectSeats.departmentCode = "";
+    },
+
+    //用户事件
+    whenUserClickTheEditButton() {
+      const that = this;
+
+      that.clearSelectSeatsData();
+
+      if(that.editSeat == false) {
+        that.editSeat = true;
+        that.editSeatHintMsg = "取消编辑";
+      } else{
+        that.editSeat = false;
+        that.editSeatHintMsg = "开始编辑";
+      }
+    },
+
+    whenUserClickTheUpdateButton() {
+      const that = this;
+      //如果没有点击开始编辑则 警告提示 exit
+      if (that.editSeat == false) {
+        that.suces("请点击“开始编辑”按钮后选择想更改的座位");
+      } else { //显示弹窗
+        that.dialogVisible = true
+      }
+    },
+
+    whenUserClickTheSeat(item) {
+      const that = this;
+      //if user not start edit => hint
+
+      if (that.editSeat == true) {
+        let codes = that.curSelectSeats.codes;
+        let idx = -1;
+        for(let i=0; i<codes.length; i++){
+          if (codes[i] == item.code) {
+            idx = i;
+            break;
+          }
+        }
+
+        if (idx > -1) {
+          that.curSelectSeats.codes.splice(idx, 1);
+        } else {
+          that.curSelectSeats.codes.push(item.code);
+        }
+
+      } else {
+        // request 预定数据 from server
+        //弹出提示：预定人信息
+      }
+
+    },
+
+    whenUserClickTheDialogSaveButton() {
+      const that = this;
+
+      if (that.checkHint()) {
+        //提交数据
+        console.log("提交数据")
+        console.log(that.curSelectSeats)
+        this.dialogVisible = false
+      }
+    },
+
+    whenUserClickTheFloorButton(id) {
+      this.floorSelect = id;
+    },
+
+    //get data from server
+    /***
+     *
+     * 在created
+     */
+    loadTheFloorData() {
+      const that = this;
+      pcApi.getFloorList({}).then(res => {
+        let tt = res.result;
+
+        if (tt.length < 1) {
+          that.error("出错: 没有楼层数据")
+        } else {
+          that.floorListData = tt;
+          that.floorSelect = that.floorListData[0].code;
+
+          //加载指定的楼层数据
+          that.loadTheSpecificFloorData();
+        }
+
+      }).catch(err => {
+        that.error("出错: 网络请求-楼层数据-失败")
+      })
+    },
+
+    /***
+     *
+     * 在created
+     */
+    loadTheSeatTypeList() {
+      const that = this;
+      pcApi.getSeatTypeList().then(res => {
+        let tt = res.result;
+
+        if (tt.length < 1) {
+          that.error("出错: 没有座位类型数据")
+        } else {
+          let tt2 = [];
+          for(let i=0; i<tt.lenght; i++) {
+            let tvar = {value: tt[i].code, label: tt[i].name}
+            tt2.push(tvar)
+          }
+
+          that.seatCategoryInfos = tt2;
+        }
+      }).catch(err => {
+        that.error("出错: 网络请求-座位类型数据-失败")
+      })
+    },
+
+    /***
+     *
+     * 在created
+     */
+    loadTheDepartmentList() {
+      //获取所有部门数据
+      const that = this;
+      pcApi.getDepartmentList().then(res => {
+        let tt = res.result;
+        if (tt.length < 1) {
+          that.error("出错: 没有座位类型数据")
+        } else {
+          that.deptInfos = tt;
+        }
+      }).catch(err => {
+        that.error("出错: 网络请求-部门数据-失败")
+      })
+    },
+
+    /**
+     * 加载情况:
+     *  1. 在加载完毕所有楼层数据后加载
+     *  2.在管理员提交数据时,从新刷新时
+     */
+    loadTheSpecificFloorData() {
+      const that = this;
+      pcApi.getFloorData({code: that.floorSelect}).then(res => {
+        let tt = res.result;
+        if (tt.length < 1) {
+          that.error("出错: 没有指定的楼层数据")
+        } else {
+          that.floorData = tt;
+        }
+      }).catch(err => {
+        that.error("出错: 网络请求-获取指定的楼层数据-失败")
+      })
+    },
+
+    /***
+     *
+     * 在用户点击座位时
+     */
+    loadTheReservationStaff(seatCode) {
+      const that = this;
+        pcApi.getReservationStaff({selectDate: that.filterDate, code: seatCode}).then(res => {
+          let tt = res.result;
+          if (tt.no == undefined) {
+            that.error("该预定人信息不存在");
+          } else {
+            that.seatReservedHintInfo = tt.no+"-"+tt.name+"-"+tt.departmentName;
+          }
+        }).catch(err => {
+          that.error("出错: 网络请求-加载预定个人信息-失败")
+        })
+    },
+
+    /**
+     * 在用户点击保存时
+     */
+    saveTheSeatConfig() {
+      const that = this;
+      pcApi.saveSeatConfig(that.curSelectSeats).then(res => {
+        let tt = res.result;
+        if (tt.value == 0) {
+          that.suces("成功: 保存信息成功");
+          that.loadTheSpecificFloorData(); //从新加载楼层数据
+        } else {
+          that.error("出错: 保存-数据-失败")
+        }
+
+      }).catch(err => {
+        that.error("出错: 网络请求-加载预定个人信息-失败")
+      })
+    },
+
+    //waring
+    alert(text) {
+      this.$message(text);
+    },
+    suces(text) {
+      this.$message({
+        message: text,
+        type: 'success'
+      });
+    },
+    warig(text) {
+      this.$message({
+        message: text,
+        type: 'warning'
+      });
+    },
+    error(text) {
+      this.$message.error(text);
     }
 
+
+  },
+  watch: {
+    'curSelectSeats.typeCode' () {
+      const that = this;
+      this.checkHint();
+      let x = that.curSelectSeats.typeCode;
+      if (x == 2) {
+        that.disableTheSelectDept = true;
+        that.curSelectSeats.departmentCode = "";
+        that.disableTheSelectDeptShowMsg = "公共座位";
+      } else {
+        that.disableTheSelectDept = false;
+        that.curSelectSeats.departmentCode = "";
+        that.disableTheSelectDeptShowMsg = "请选择座位类别";
+      }
+
+    },
+    'curSelectSeats.departmentCode' () {
+      this.checkHint();
+    }
   }
 }
 </script>
 
 <style lang="less" scoped>
+
+  .clear{
+    clear:both;
+  }
+  .my-dialog-hit {
+    color: red;
+    float: left;
+    margin-left: 120px;
+  }
+
+  .my-dialog-sty /deep/ .el-dialog {
+    margin-top: 30vh !important;
+  }
+
+  .choosesty-opt {
+    width: 250px;
+  }
+
+  .choosesty {
+    margin-top: 1rem;
+    font-size: 1rem;
+  }
+
+
+
+
 
   .user-seat {
     /*background-image: url('../assets/images/icon_1.png');*/
