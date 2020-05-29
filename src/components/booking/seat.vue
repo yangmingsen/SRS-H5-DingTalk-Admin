@@ -3,9 +3,11 @@
     <el-container>
       <el-aside class="slide">
         <div class="floor">
-          <div v-for="item in floorListData" class="floor-msg" :class="getSilderSty(item.code)" @click="whenUserClickTheFloorButton(item.code)">
-            {{item.name}}
-          </div>
+          <a>
+            <div v-for="item in floorListData" class="floor-msg" :class="getSilderSty(item.code)" @click="whenUserClickTheFloorButton(item.code)">
+             {{item.name}}
+            </div>
+          </a>
         </div>
       </el-aside>
       <el-container>
@@ -105,15 +107,45 @@
                 </div>
 
                 <div v-if="floorSelect == 2" class="chooseseat-floor choosearea-10B6">
-                  <div v-for="item in seatBaseInfo10b6" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" ></div>
+                  <div v-for="item in seatBaseInfo10b6" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" @click="whenUserClickTheSeat(item)">
+                    <el-popover
+                      v-if="editSeat == false"
+                      placement="right"
+                      title="预订人信息"
+                      width="80"
+                      trigger="click"
+                      :content="seatReservedHintInfo">
+                      <div class="popover-space" style="width:100%;height:100%;" slot="reference">&nbsp;</div>
+                    </el-popover>
+                  </div>
                 </div>
 
                 <div v-if="floorSelect == 3" class="chooseseat-floor choosearea-10B7">
-                  <div v-for="item in seatBaseInfo10b7" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" ></div>
+                  <div v-for="item in seatBaseInfo10b7" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" @click="whenUserClickTheSeat(item)">
+                    <el-popover
+                      v-if="editSeat == false"
+                      placement="right"
+                      title="预订人信息"
+                      width="80"
+                      trigger="click"
+                      :content="seatReservedHintInfo">
+                      <div class="popover-space" style="width:100%;height:100%;" slot="reference">&nbsp;</div>
+                    </el-popover>
+                  </div>
                 </div>
 
                 <div v-if="floorSelect == 4" class="chooseseat-floor choosearea-13B5">
-                  <div v-for="item in seatBaseInfo13b5" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" ></div>
+                  <div v-for="item in seatBaseInfo13b5" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" @click="whenUserClickTheSeat(item)">
+                    <el-popover
+                      v-if="editSeat == false"
+                      placement="right"
+                      title="预订人信息"
+                      width="80"
+                      trigger="click"
+                      :content="seatReservedHintInfo">
+                      <div class="popover-space" style="width:100%;height:100%;" slot="reference">&nbsp;</div>
+                    </el-popover>
+                  </div>
                 </div>
 
               </div>
@@ -343,7 +375,7 @@ export default {
       ], //某个楼层具体数据
       editSeat: false, //是否开始编辑
       editSeatHintMsg: "开始编辑",
-      seatReservedHintInfo:"033-杨铭森-流程IT中心",
+      seatReservedHintInfo:"无数据",
       dialogVisible: false,
       disableTheSelectDept: false,
       disableTheSelectDeptShowMsg: "请选择座位类别",
@@ -965,8 +997,9 @@ export default {
       this.$confirm('确认关闭？')
         .then(_ => {
           done();
+          // this.clearSelectSeatsData()
         })
-        .catch(_ => {});
+        .catch(_ => {console.log("no")});
     },
 
     getRateSty(item) {
@@ -1069,7 +1102,13 @@ export default {
       if (that.editSeat == false) {
         that.suces("请点击“开始编辑”按钮后选择想更改的座位");
       } else { //显示弹窗
-        that.dialogVisible = true
+
+        if (that.curSelectSeats.codes.length > 1) {
+          that.dialogVisible = true
+        } else {
+          that.warig("请先选好座位在点击更改哦!")
+        }
+
       }
     },
 
@@ -1095,6 +1134,7 @@ export default {
 
       } else {
         // request 预定数据 from server
+        that.loadTheReservationStaff(item.code);
         //弹出提示：预定人信息
       }
 
@@ -1105,14 +1145,14 @@ export default {
 
       if (that.checkHint()) {
         //提交数据
-        console.log("提交数据")
-        console.log(that.curSelectSeats)
-        this.dialogVisible = false
+        that.saveTheSeatConfig();
+
       }
     },
 
     whenUserClickTheFloorButton(id) {
-      this.floorSelect = id;
+      const that = this;
+      that.loadTheSpecificFloorData(id);
     },
 
     //get data from server
@@ -1124,18 +1164,18 @@ export default {
       const that = this;
       pcApi.getFloorList({}).then(res => {
         let tt = res.result;
-
-        if (tt.length < 1) {
+        if (tt && tt.length < 1) {
           that.error("出错: 没有楼层数据")
         } else {
           that.floorListData = tt;
-          that.floorSelect = that.floorListData[0].code;
+          // that.floorSelect = that.floorListData[0].code;
 
           //加载指定的楼层数据
-          that.loadTheSpecificFloorData();
+          that.loadTheSpecificFloorData(that.floorListData[0].code);
         }
 
       }).catch(err => {
+        console.error(err);
         that.error("出错: 网络请求-楼层数据-失败")
       })
     },
@@ -1148,16 +1188,14 @@ export default {
       const that = this;
       pcApi.getSeatTypeList().then(res => {
         let tt = res.result;
-
-        if (tt.length < 1) {
+        if (tt && tt.length < 1) {
           that.error("出错: 没有座位类型数据")
         } else {
           let tt2 = [];
-          for(let i=0; i<tt.lenght; i++) {
+          for(let i=0; i<tt.length; i++) {
             let tvar = {value: tt[i].code, label: tt[i].name}
             tt2.push(tvar)
           }
-
           that.seatCategoryInfos = tt2;
         }
       }).catch(err => {
@@ -1174,7 +1212,7 @@ export default {
       const that = this;
       pcApi.getDepartmentList().then(res => {
         let tt = res.result;
-        if (tt.length < 1) {
+        if (tt && tt.length < 1) {
           that.error("出错: 没有座位类型数据")
         } else {
           that.deptInfos = tt;
@@ -1189,14 +1227,17 @@ export default {
      *  1. 在加载完毕所有楼层数据后加载
      *  2.在管理员提交数据时,从新刷新时
      */
-    loadTheSpecificFloorData() {
+    loadTheSpecificFloorData(floorSelect) {
       const that = this;
-      pcApi.getFloorData({code: that.floorSelect}).then(res => {
+      pcApi.getFloorData({code: floorSelect}).then(res => {
         let tt = res.result;
-        if (tt.length < 1) {
+        if (tt && tt.length < 1) {
           that.error("出错: 没有指定的楼层数据")
         } else {
           that.floorData = tt;
+
+
+          that.floorSelect = floorSelect;
         }
       }).catch(err => {
         that.error("出错: 网络请求-获取指定的楼层数据-失败")
@@ -1214,7 +1255,7 @@ export default {
           if (tt.no == undefined) {
             that.error("该预定人信息不存在");
           } else {
-            that.seatReservedHintInfo = tt.no+"-"+tt.name+"-"+tt.departmentName;
+            that.seatReservedHintInfo = tt.no+"-"+tt.userName+"-"+tt.departmentName;
           }
         }).catch(err => {
           that.error("出错: 网络请求-加载预定个人信息-失败")
@@ -1228,15 +1269,18 @@ export default {
       const that = this;
       pcApi.saveSeatConfig(that.curSelectSeats).then(res => {
         let tt = res.result;
-        if (tt.value == 0) {
+        if (tt && tt.value == 0) {
           that.suces("成功: 保存信息成功");
-          that.loadTheSpecificFloorData(); //从新加载楼层数据
+          that.loadTheSpecificFloorData(that.floorSelect); //从新加载楼层数据
+
+          that.dialogVisible = false
+          that.clearSelectSeatsData();
+
         } else {
           that.error("出错: 保存-数据-失败")
         }
-
       }).catch(err => {
-        that.error("出错: 网络请求-加载预定个人信息-失败")
+        that.error("出错: 网络请求-提交座位信息-失败")
       })
     },
 
@@ -1259,8 +1303,6 @@ export default {
     error(text) {
       this.$message.error(text);
     }
-
-
   },
   watch: {
     'curSelectSeats.typeCode' () {
@@ -1280,7 +1322,16 @@ export default {
     },
     'curSelectSeats.departmentCode' () {
       this.checkHint();
+    },
+    filterDate: function ( ) {
+        this.loadTheSpecificFloorData(this.floorSelect);
     }
+  },
+  created () {
+    const that = this;
+    that.loadTheFloorData();
+    that.loadTheSeatTypeList();
+    that.loadTheDepartmentList();
   }
 }
 </script>

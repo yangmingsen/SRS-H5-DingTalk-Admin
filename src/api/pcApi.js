@@ -7,7 +7,12 @@ export const pcApi = {
    * @returns {Promise<*>}
    */
   async getFloorList (params) {
-    return await http.get("pc/storey/list", params);
+    try {
+      const result = await http.get("pc/storey/list", params);
+      return result.data;
+    } catch (e) {
+      return {}
+    }
   },
 
   /***
@@ -19,7 +24,8 @@ export const pcApi = {
    * @returns {Promise<*>}
    */
   async getReservationStaff(params) {
-    return await http.get("pc/reservation/getReservationStaff", params);
+    const res = await http.get("pc/reservation/getReservationStaff", params);
+    return res.data;
   },
 
   /***
@@ -31,7 +37,8 @@ export const pcApi = {
    * @returns {Promise<void>}
    */
   async getFloorData(params) {
-    return await http.get("pc/seat/list", params);
+    const result = await http.get("pc/seat/list", params);
+    return result.data;
   },
 
   /***
@@ -40,7 +47,9 @@ export const pcApi = {
    * @returns {Promise<*>}
    */
   async getSeatTypeList(params) {
-    return await http.get("pc/seat/listType", params);
+    const result = await http.get("pc/seat/listType", params);
+    return result.data;
+
   },
 
   /***
@@ -49,7 +58,8 @@ export const pcApi = {
    * @returns {Promise<*>}
    */
   async getDepartmentList(params) {
-    return await http.get("pc/department/list", params);
+    const result = await http.get("pc/department/list", params);
+    return result.data;
   },
 
   /***
@@ -59,8 +69,9 @@ export const pcApi = {
    * @returns {Promise<*>}
    */
   async saveSeatConfig(params) {
-    return await http.post("pc/seat/updateSeat", params);
-  },
+    const result = await http.post("pc/seat/updateSeat", params);
+    return result.data;
+    },
 
 
 }
