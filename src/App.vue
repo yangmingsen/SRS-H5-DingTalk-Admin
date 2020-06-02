@@ -105,6 +105,12 @@ export default {
   border-width: 8px 8px 8px 0;
   bottom: -8px;
 }
+.el-popover {
+  min-width: 70px;
+}
+.el-popover--plain {
+  padding: 10px 10px;
+}
 .custom-tree-node {
   width: 100%;
   position: relative;

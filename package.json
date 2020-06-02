@@ -36,7 +36,7 @@
     "@galaplat/modules-material-supplier": "^1.0.1",
     "@galaplat/modules-material-version": "^1.0.1",
     "@galaplat/modules-my-iframe": "^1.0.6",
-    "@galaplat/modules-service-examine": "^1.0.1",
+    "@galaplat/modules-service-examine": "^1.0.6",
     "@galaplat/modules-service-jump": "^1.0.0",
     "@galaplat/modules-service-log": "^1.0.0",
     "@galaplat/modules-service-organization": "^1.0.1",

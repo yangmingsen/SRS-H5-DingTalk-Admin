@@ -35,6 +35,8 @@
               :visible.sync="dialogVisible"
               width="20%"
               class="my-dialog-sty"
+              :modal=true
+              :close-on-click-modal=false
             >
                 <span>
                  <div class="choosesty" >
@@ -96,10 +98,17 @@
                     <el-popover
                       v-if="editSeat == false"
                       placement="right"
-                      title="预订人信息"
-                      width="80"
+                      width="30"
                       trigger="click"
                       :content="seatReservedHintInfo">
+
+                      <ul class="tips-content" v-if="haveTheReservedPersonInfo == true">
+                        <li>{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
+                        <li>{{reservedPersonInfo.departmentName}}</li>
+                      </ul>
+                      <ul class="tips-content" v-if="haveTheReservedPersonInfo == false">
+                        <li>无数据</li>
+                      </ul>
                       <div class="popover-space" style="width:100%;height:100%;" slot="reference">&nbsp;</div>
                     </el-popover>
                   </div>
@@ -387,6 +396,12 @@ export default {
       dialogHint: {
         ctge: false,
         dept: false
+      },
+      haveTheReservedPersonInfo: false,
+      reservedPersonInfo: {
+        no: "",
+        userName: "",
+        departmentName: ""
       },
 
       //10b5楼座位样式数据 static
@@ -992,15 +1007,6 @@ export default {
 
     },
 
-    handleClose(done) {
-      this.$confirm('确认关闭？')
-        .then(_ => {
-
-          // this.clearSelectSeatsData()
-        })
-        .catch(_ => {console.log("no")});
-    },
-
     getRateSty(item) {
       var classes = {}
       classes[item.class] = true;
@@ -1088,10 +1094,10 @@ export default {
 
       if(that.editSeat == false) {
         that.editSeat = true;
-        that.editSeatHintMsg = "取消编辑";
+        // that.editSeatHintMsg = "取消编辑";
       } else{
         that.editSeat = false;
-        that.editSeatHintMsg = "开始编辑";
+        // that.editSeatHintMsg = "开始编辑";
       }
     },
 
@@ -1252,13 +1258,18 @@ export default {
         pcApi.getReservationStaff({selectDate: that.filterDate, code: seatCode}).then(res => {
           let tt = res.result;
           if (tt.no == undefined) {
-            that.warig("该预定人信息不存在");
-            that.seatReservedHintInfo = "无数据"
+            // that.warig("该预定人信息不存在");
+            // that.seatReservedHintInfo = "无数据"
+            that.haveTheReservedPersonInfo = false;
           } else {
-            that.seatReservedHintInfo = tt.no+"-"+tt.userName+"-"+tt.departmentName;
+            that.haveTheReservedPersonInfo = true;
+            that.reservedPersonInfo = tt;
+            //that.seatReservedHintInfo = tt.no+"-"+tt.userName+"-"+tt.departmentName;
           }
         }).catch(err => {
-          that.error("出错: 网络请求-加载预定个人信息-失败")
+          // that.error("出错: 加载预定个人信息")
+          that.haveTheReservedPersonInfo = false;
+          // that.seatReservedHintInfo = "无数据"
         })
     },
 
@@ -1275,6 +1286,7 @@ export default {
 
           that.dialogVisible = false
           that.clearSelectSeatsData();
+          that.editSeat = false; //取消编辑
 
         } else {
           that.error("出错: 保存-数据-失败")
@@ -1325,7 +1337,19 @@ export default {
     },
     filterDate: function ( ) {
         this.loadTheSpecificFloorData(this.floorSelect);
+    },
+    floorSelect: function ( ) {
+        this.editSeat = false;
+        this.clearSelectSeatsData();
+    },
+    editSeat: function () {
+        if (this.editSeat == false) {
+          this.editSeatHintMsg = "开始编辑";
+        } else {
+          this.editSeatHintMsg = "取消编辑";
+        }
     }
+
   },
   created () {
     const that = this;
@@ -1339,7 +1363,9 @@ export default {
 <style lang="less" scoped>
 
 
-
+  .my-popo /deep/ .el-popover {
+    min-width: 30px;
+  }
 
   .clear{
     clear:both;
