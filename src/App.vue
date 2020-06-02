@@ -97,18 +97,18 @@ export default {
 
 <style lang="less" rel="stylesheet/less">
 @import '~@galaplat/utils/src/styles/var.less';
-.el-popper[x-placement^="right"] .popper__arrow {
+/deep/.el-popper[x-placement^="right"] .popper__arrow {
   left: -8px;
 }
-.el-popper[x-placement^="right"] .popper__arrow::after {
+/deep/.el-popper[x-placement^="right"] .popper__arrow::after {
   border-right-color: #010101;
   border-width: 8px 8px 8px 0;
   bottom: -8px;
 }
-.el-popover {
+/deep/.el-popover {
   min-width: 70px;
 }
-.el-popover--plain {
+/deep/.el-popover--plain {
   padding: 10px 10px;
 }
 .custom-tree-node {
