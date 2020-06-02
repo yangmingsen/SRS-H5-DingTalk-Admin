@@ -14,7 +14,6 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "@esr/gp-test-case": "^1.0.0-beta2",
     "@esr/handsontable": "^6.0.1",
     "@galaplat/base-components": "^1.0.12",
     "@galaplat/component-audit-dialog": "^1.0.1",
