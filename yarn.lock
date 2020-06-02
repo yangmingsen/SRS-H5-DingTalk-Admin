@@ -223,7 +223,7 @@
   resolved "http://jenkinsqd.test.esr.local:7001/@galaplat/modules-my-iframe/download/@galaplat/modules-my-iframe-1.0.7.tgz#2e56e790a744bb5eb5d2f48da4da9d2b36daa342"
   integrity sha1-LlbnkKdEu1610vSNpNqdKzbao0I=
 
-"@galaplat/modules-service-examine@^1.0.6":
+"@galaplat/modules-service-examine@^1.0.1":
   version "1.0.1"
   resolved "http://jenkinsqd.test.esr.local:7001/@galaplat/modules-service-examine/download/@galaplat/modules-service-examine-1.0.1.tgz#9af815c5cf3f759e943c6bab64035cf1a119a7f0"
   integrity sha1-mvgVxc8/dZ6UPGurZANc8aEZp/A=
