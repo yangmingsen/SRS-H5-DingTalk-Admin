@@ -34,12 +34,11 @@
               title="提示"
               :visible.sync="dialogVisible"
               width="20%"
-              :before-close="handleClose"
               class="my-dialog-sty"
             >
                 <span>
                  <div class="choosesty" >
-                   更改座位类别
+                   <span style="color: red">*</span>更改座位类别
                   <el-select class="choosesty-opt"  v-model="curSelectSeats.typeCode" placeholder="请选择座位类别">
                       <el-option
                         v-for="item in seatCategoryInfos"
@@ -52,7 +51,7 @@
                   <span v-if="dialogHint.ctge" class="my-dialog-hit">请选择座位类别</span>
 
                   <div class="clear choosesty" >
-                   更改所属部门
+                   <span style="color: red">*</span>更改所属部门
                   <el-select  class="choosesty-opt" :disabled="disableTheSelectDept"  v-model="curSelectSeats.departmentCode" :placeholder="disableTheSelectDeptShowMsg">
                       <el-option
                         v-for="item in deptInfos"
@@ -996,7 +995,7 @@ export default {
     handleClose(done) {
       this.$confirm('确认关闭？')
         .then(_ => {
-          done();
+
           // this.clearSelectSeatsData()
         })
         .catch(_ => {console.log("no")});
@@ -1103,7 +1102,7 @@ export default {
         that.suces("请点击“开始编辑”按钮后选择想更改的座位");
       } else { //显示弹窗
 
-        if (that.curSelectSeats.codes.length > 1) {
+        if (that.curSelectSeats.codes.length > 0) {
           that.dialogVisible = true
         } else {
           that.warig("请先选好座位在点击更改哦!")
@@ -1253,7 +1252,8 @@ export default {
         pcApi.getReservationStaff({selectDate: that.filterDate, code: seatCode}).then(res => {
           let tt = res.result;
           if (tt.no == undefined) {
-            that.error("该预定人信息不存在");
+            that.warig("该预定人信息不存在");
+            that.seatReservedHintInfo = "无数据"
           } else {
             that.seatReservedHintInfo = tt.no+"-"+tt.userName+"-"+tt.departmentName;
           }
@@ -1338,13 +1338,16 @@ export default {
 
 <style lang="less" scoped>
 
+
+
+
   .clear{
     clear:both;
   }
   .my-dialog-hit {
     color: red;
     float: left;
-    margin-left: 120px;
+    margin-left: 109px;
   }
 
   .my-dialog-sty /deep/ .el-dialog {
@@ -1352,7 +1355,7 @@ export default {
   }
 
   .choosesty-opt {
-    width: 250px;
+    width: 235px;
   }
 
   .choosesty {
@@ -1478,6 +1481,7 @@ export default {
 
       .body-content {
         margin-top: 10px;
+        min-width: 1130px;
 
         .body-content-left {
           float: left;
@@ -1485,10 +1489,11 @@ export default {
             margin-top: 3rem;
             .body-content-left-seatctf {
               display: inline-block;
-              height: 3rem;
-              background-size: 3rem;
+              height: 2.2rem;
+              background-size: 2.2rem;
               background-repeat: no-repeat;
-              margin-left: 35px;
+              margin-left: 25px;
+              background-position: center;
               float: left;
               font-size: 1rem;
               padding-top: 50px;
@@ -1516,7 +1521,7 @@ export default {
 
         .body-content-right {
           background-color: orange;
-          margin-left: 600px;
+          margin-left: 400px;
           width: 700px;
 
           .chooseseat {

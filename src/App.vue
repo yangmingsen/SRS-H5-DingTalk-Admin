@@ -97,6 +97,14 @@ export default {
 
 <style lang="less" rel="stylesheet/less">
 @import '~@galaplat/utils/src/styles/var.less';
+.el-popper[x-placement^="right"] .popper__arrow {
+  left: -8px;
+}
+.el-popper[x-placement^="right"] .popper__arrow::after {
+  border-right-color: #010101;
+  border-width: 8px 8px 8px 0;
+  bottom: -8px;
+}
 .custom-tree-node {
   width: 100%;
   position: relative;
