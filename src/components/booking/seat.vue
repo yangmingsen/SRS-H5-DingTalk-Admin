@@ -119,10 +119,17 @@
                     <el-popover
                       v-if="editSeat == false"
                       placement="right"
-                      title="预订人信息"
-                      width="80"
+                      width="30"
                       trigger="click"
                       :content="seatReservedHintInfo">
+
+                      <ul class="tips-content" v-if="haveTheReservedPersonInfo == true">
+                        <li>{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
+                        <li>{{reservedPersonInfo.departmentName}}</li>
+                      </ul>
+                      <ul class="tips-content" v-if="haveTheReservedPersonInfo == false">
+                        <li>无数据</li>
+                      </ul>
                       <div class="popover-space" style="width:100%;height:100%;" slot="reference">&nbsp;</div>
                     </el-popover>
                   </div>
@@ -133,10 +140,17 @@
                     <el-popover
                       v-if="editSeat == false"
                       placement="right"
-                      title="预订人信息"
-                      width="80"
+                      width="30"
                       trigger="click"
                       :content="seatReservedHintInfo">
+
+                      <ul class="tips-content" v-if="haveTheReservedPersonInfo == true">
+                        <li>{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
+                        <li>{{reservedPersonInfo.departmentName}}</li>
+                      </ul>
+                      <ul class="tips-content" v-if="haveTheReservedPersonInfo == false">
+                        <li>无数据</li>
+                      </ul>
                       <div class="popover-space" style="width:100%;height:100%;" slot="reference">&nbsp;</div>
                     </el-popover>
                   </div>
@@ -147,10 +161,17 @@
                     <el-popover
                       v-if="editSeat == false"
                       placement="right"
-                      title="预订人信息"
-                      width="80"
+                      width="30"
                       trigger="click"
                       :content="seatReservedHintInfo">
+
+                      <ul class="tips-content" v-if="haveTheReservedPersonInfo == true">
+                        <li>{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
+                        <li>{{reservedPersonInfo.departmentName}}</li>
+                      </ul>
+                      <ul class="tips-content" v-if="haveTheReservedPersonInfo == false">
+                        <li>无数据</li>
+                      </ul>
                       <div class="popover-space" style="width:100%;height:100%;" slot="reference">&nbsp;</div>
                     </el-popover>
                   </div>
