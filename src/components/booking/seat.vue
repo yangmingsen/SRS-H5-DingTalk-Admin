@@ -3,9 +3,9 @@
     <el-container>
       <el-aside class="slide">
         <div class="floor">
-          <a>
-            <div v-for="item in floorListData" class="floor-msg" :class="getSilderSty(item.code)" @click="whenUserClickTheFloorButton(item.code)">
-             {{item.name}}
+          <a v-for="item in floorListData"   @click="whenUserClickTheFloorButton(item.code)">
+            <div class="floor-msg" :class="getSilderSty(item.code)" >
+              <span :class="getSilderNameSty(item.code)">{{item.name}}</span>
             </div>
           </a>
         </div>
@@ -984,6 +984,11 @@ export default {
   },
   methods: {
 
+    getSilderNameSty(id) {
+      return {
+        'slider-name-sty': this.floorSelect == id
+      }
+    },
     getSilderSty(id){
       return {
         'active-bg': this.floorSelect == id
@@ -994,9 +999,9 @@ export default {
       if( theClassSty == ""){
         return "right";
       } else if( theClassSty == "rotate90")  {
-        return "left";
+        return "right";
       } else if( theClassSty == "rotate180")  {
-        return "top";
+        return "right";
       } else if( theClassSty == "rotate270")  {
         return "right";
       }
@@ -1279,6 +1284,7 @@ export default {
           if (item.class == "rotate180") {
             console.log(item.class)
             x1.classList.add("my-popo-rotate180");
+
           } else if (item.class == "rotate90") {
 
             x1.classList.add("my-popo-rotate90");
@@ -1385,20 +1391,20 @@ export default {
   },
   mounted () {
     document.getElementsByClassName("el-dialog__footer")[0].classList.add("my-button-sty")
-    // document.getElementsByClassName("el-button el-button--primary")[0].classList.add("my-button-padding-sty")
+    document.getElementsByClassName("el-button el-button--primary")[0].classList.add("my-button-padding-sty")
   }
 }
 </script>
 
 <style lang="less" scoped>
-  /*/deep/.el-popper[x-placement^="right"] .popper__arrow {*/
-  /*  left: -8px;*/
-  /*}*/
-  /*/deep/.el-popper[x-placement^="right"] .popper__arrow::after {*/
-  /*  border-right-color: #010101;*/
-  /*  border-width: 8px 8px 8px 0;*/
-  /*  bottom: -8px;*/
-  /*}*/
+  /deep/.el-popper[x-placement^="right"] .popper__arrow {
+    left: -8px;
+  }
+  /deep/.el-popper[x-placement^="right"] .popper__arrow::after {
+    border-right-color: #010101;
+    border-width: 8px 8px 8px 0;
+    bottom: -8px;
+  }
 
   /deep/ .my-button-sty {
     text-align: center;
@@ -1407,24 +1413,27 @@ export default {
     margin-left: 80px;
   }
 
-  /*/deep/ .my-popo-rotate{*/
-  /*  left: 11px !important;*/
-  /*}*/
+  /deep/ .my-popo-rotate{
+    left: 11px !important;
+    top: -10px !important;
+  }
 
-  /*/deep/ .my-popo-rotate180 {*/
-  /*  transform: rotate(180deg);*/
-  /*  top: -28px !important;*/
-  /*}*/
+  /deep/ .my-popo-rotate180 {
+    transform: rotate(180deg);
+    top: -10px !important;
+    left: 1px !important;
+  }
 
-  /*/deep/ .my-popo-rotate90 {*/
-  /*  transform: rotate(270deg);*/
-  /*  left: -88px !important;*/
-  /*}*/
+  /deep/ .my-popo-rotate90 {
+    transform: rotate(-90deg);
+    top: -14px !important;
+    left: 7px !important;
+  }
 
-  /*/deep/ .my-popo-rotate270 {*/
-  /*  transform: rotate(90deg);*/
-  /*  left: 6px !important;*/
-  /*}*/
+  /deep/ .my-popo-rotate270 {
+    transform: rotate(90deg);
+    left: 6px !important;
+  }
 
   /deep/.el-popover {
     min-width: 80px;
@@ -1432,6 +1441,11 @@ export default {
   /deep/.el-popover--plain {
     padding: 10px 10px;
   }
+
+  .slider-name-sty {
+    margin-left: -12px;
+  }
+
   .tip-hint-sty {
     font-size: 0.8rem;
   }
