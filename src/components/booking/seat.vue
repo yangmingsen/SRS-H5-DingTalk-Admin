@@ -1259,13 +1259,10 @@ export default {
           console.log(JSON.stringify(tt))
 
           if (tt && tt.no == undefined) {
-            console.log("und")
             // that.warig("该预定人信息不存在");
             // that.seatReservedHintInfo = "无数据"
             that.haveTheReservedPersonInfo = false;
           } else {
-            console.log("yes")
-
             that.haveTheReservedPersonInfo = true;
             that.reservedPersonInfo = tt;
 
@@ -1444,7 +1441,7 @@ export default {
   }
 
   .selected {
-    z-index: 4000;
+    z-index: 100;
   }
 
   .clear{
