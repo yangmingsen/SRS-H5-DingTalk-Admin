@@ -116,7 +116,7 @@
                 </div>
 
                 <div v-if="floorSelect == 2" class="chooseseat-floor choosearea-10B6">
-                  <div v-for="item in seatBaseInfo10b6" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" @click="whenUserClickTheSeat(item)">
+                  <div :id="item.code" v-for="item in seatBaseInfo10b6" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" @click="whenUserClickTheSeat(item)">
                     <el-popover
                       v-if="editSeat == false"
                       :placement= "getTheHitPostion(item.class)"
@@ -138,7 +138,7 @@
                 </div>
 
                 <div v-if="floorSelect == 3" class="chooseseat-floor choosearea-10B7">
-                  <div v-for="item in seatBaseInfo10b7" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" @click="whenUserClickTheSeat(item)">
+                  <div :id="item.code" v-for="item in seatBaseInfo10b7" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" @click="whenUserClickTheSeat(item)">
                     <el-popover
                       v-if="editSeat == false"
                       :placement= "getTheHitPostion(item.class)"
@@ -160,7 +160,7 @@
                 </div>
 
                 <div v-if="floorSelect == 4" class="chooseseat-floor choosearea-13B5">
-                  <div v-for="item in seatBaseInfo13b5" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" @click="whenUserClickTheSeat(item)">
+                  <div :id="item.code" v-for="item in seatBaseInfo13b5" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" @click="whenUserClickTheSeat(item)">
                     <el-popover
                       v-if="editSeat == false"
                       :placement= "getTheHitPostion(item.class)"
@@ -1262,13 +1262,20 @@ export default {
      */
     loadTheReservationStaff(item) {
       const that = this;
+        console.log(that.filterDate+" "+item.code)
         pcApi.getReservationStaff({selectDate: that.filterDate, code: item.code}).then(res => {
           let tt = res.result;
+
+          console.log(JSON.stringify(tt))
+
           if (tt && tt.no == undefined) {
+            console.log("und")
             // that.warig("该预定人信息不存在");
             // that.seatReservedHintInfo = "无数据"
             that.haveTheReservedPersonInfo = false;
           } else {
+            console.log("yes")
+
             that.haveTheReservedPersonInfo = true;
             that.reservedPersonInfo = tt;
 
