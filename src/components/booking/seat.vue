@@ -31,12 +31,12 @@
             </div>
 
             <el-dialog
-              title="提示"
               :visible.sync="dialogVisible"
-              width="20%"
+              width="30%"
               class="my-dialog-sty"
               :modal=true
               :close-on-click-modal=false
+
             >
                 <span>
                  <div class="choosesty" >
@@ -1139,16 +1139,6 @@ export default {
         // request 预定数据 from server
         that.loadTheReservationStaff(item);
         //弹出提示：预定人信息
-
-        // if (item.class == "rotate180") {
-        //   console.log(item.class)
-        //   document.getElementsByClassName("el-popover el-popper")[0].classList.add("my-popo-rotate180");
-        // } else if (item.class == "rotate90") {
-        //   document.getElementsByClassName("el-popover el-popper")[0].classList.add("my-popo-rotate90");
-        // } else  if (item.class == "rotate270"){
-        //   document.getElementsByClassName("el-popover el-popper")[0].classList.add("my-popo-rotate270");
-        // }
-
       }
 
     },
@@ -1292,16 +1282,12 @@ export default {
           if (item.class == "rotate180") {
             console.log(item.class)
             x1.classList.add("my-popo-rotate180");
-            // document.getElementsByClassName("el-popover el-popper")[0].classList.add("my-popo-rotate180");
-            // document.getElementById(item.code).firstChild.firstChild.classList.add("my-popo-rotate180");
           } else if (item.class == "rotate90") {
-            // document.getElementsByClassName("el-popover el-popper")[0].classList.add("my-popo-rotate90");
-            // document.getElementById(item.code).firstChild.firstChild.classList.add("my-popo-rotate90");
+
             x1.classList.add("my-popo-rotate90");
 
           } else  if (item.class == "rotate270"){
-            // document.getElementsByClassName("el-popover el-popper").classList.add("my-popo-rotate270");
-            // document.getElementById(item.code).firstChild.firstChild.classList.add("my-popo-rotate270");
+
             x1.classList.add("my-popo-rotate270");
           } else {
             x1.classList.add("my-popo-rotate");
@@ -1311,8 +1297,6 @@ export default {
           // that.error("出错: 加载预定个人信息")
           that.haveTheReservedPersonInfo = false;
           // that.seatReservedHintInfo = "无数据"
-
-
 
         })
     },
@@ -1401,6 +1385,10 @@ export default {
     that.loadTheFloorData();
     that.loadTheSeatTypeList();
     that.loadTheDepartmentList();
+  },
+  mounted () {
+    document.getElementsByClassName("el-dialog__footer")[0].classList.add("my-button-sty")
+    // document.getElementsByClassName("el-button el-button--primary")[0].classList.add("my-button-padding-sty")
   }
 }
 </script>
@@ -1415,6 +1403,12 @@ export default {
   /*  bottom: -8px;*/
   /*}*/
 
+  /deep/ .my-button-sty {
+    text-align: center;
+  }
+  /deep/ .my-button-padding-sty {
+    margin-left: 80px;
+  }
 
   /*/deep/ .my-popo-rotate{*/
   /*  left: 11px !important;*/
@@ -1459,7 +1453,7 @@ export default {
   .my-dialog-hit {
     color: red;
     float: left;
-    margin-left: 109px;
+    margin-left: 37%;
   }
 
   .my-dialog-sty /deep/ .el-dialog {
