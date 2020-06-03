@@ -98,21 +98,29 @@ export default {
 <style lang="less" rel="stylesheet/less">
 @import '~@galaplat/utils/src/styles/var.less';
 body {
-  /deep/.el-popper[x-placement^="right"] .popper__arrow {
-    left: -8px;
-  }
-  /deep/.el-popper[x-placement^="right"] .popper__arrow::after {
-    border-right-color: #010101;
-    border-width: 8px 8px 8px 0;
-    bottom: -8px;
-  }
-  /deep/.el-popover {
-    min-width: 70px;
-  }
-  /deep/.el-popover--plain {
-    padding: 10px 10px;
-  }
+
 }
+
+/*.my-popo-rotate{*/
+/*  left: 11px !important;*/
+/*}*/
+
+/*.my-popo-rotate180 {*/
+/*  transform: rotate(180deg);*/
+/*  top: -28px !important;*/
+/*}*/
+
+/*.my-popo-rotate90 {*/
+/*  transform: rotate(270deg);*/
+/*  left: -88px !important;*/
+/*}*/
+
+/*.my-popo-rotate270 {*/
+/*  transform: rotate(90deg);*/
+/*  left: 6px !important;*/
+/*}*/
+
+
 .custom-tree-node {
   width: 100%;
   position: relative;

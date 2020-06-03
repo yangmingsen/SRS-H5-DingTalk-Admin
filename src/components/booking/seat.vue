@@ -16,7 +16,7 @@
             <div class="header-left">
               选择日期
               <el-date-picker
-              v-model="filterDate"
+              v-model="filterDateShow"
               type="date"
               class="header-left-date-sty"
               :editable=false
@@ -93,23 +93,24 @@
             <div class="body-content-right">
               <div class="chooseseat">
                 <div v-if="floorSelect == 1" class="chooseseat-floor choosearea-10B5">
-                  <div v-for="item in seatBaseInfo10b5" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)"
+                  <div :id="item.code" v-for="item in seatBaseInfo10b5" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)"
                        @click="whenUserClickTheSeat(item)" >
                     <el-popover
                       v-if="editSeat == false"
-                      placement="right"
-                      width="30"
+                      :placement= "getTheHitPostion(item.class)"
+                      width="40"
                       trigger="click"
-                      :content="seatReservedHintInfo">
-
+                      class="my-popover"
+                      :append-to-body=false
+                      >
                       <ul class="tips-content" v-if="haveTheReservedPersonInfo == true">
-                        <li>{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
-                        <li>{{reservedPersonInfo.departmentName}}</li>
+                        <li class="tip-hint-sty">{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
+                        <li class="tip-hint-sty">{{reservedPersonInfo.departmentName}}</li>
                       </ul>
                       <ul class="tips-content" v-if="haveTheReservedPersonInfo == false">
-                        <li>无数据</li>
+                        <li class="tip-hint-sty">{{item.code}}号-无数据</li>
                       </ul>
-                      <div class="popover-space" style="width:100%;height:100%;" slot="reference">&nbsp;</div>
+                      <div  style="width:100%;height:100%; " slot="reference">&nbsp;</div>
                     </el-popover>
                   </div>
                 </div>
@@ -122,7 +123,6 @@
                       width="30"
                       trigger="click"
                       :content="seatReservedHintInfo">
-
                       <ul class="tips-content" v-if="haveTheReservedPersonInfo == true">
                         <li>{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
                         <li>{{reservedPersonInfo.departmentName}}</li>
@@ -139,7 +139,7 @@
                   <div v-for="item in seatBaseInfo10b7" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" @click="whenUserClickTheSeat(item)">
                     <el-popover
                       v-if="editSeat == false"
-                      placement="right"
+                      :placement= "getTheHitPostion(item.class)"
                       width="30"
                       trigger="click"
                       :content="seatReservedHintInfo">
@@ -169,9 +169,12 @@
                         <li>{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
                         <li>{{reservedPersonInfo.departmentName}}</li>
                       </ul>
-                      <ul class="tips-content" v-if="haveTheReservedPersonInfo == false">
-                        <li>无数据</li>
-                      </ul>
+                      <div class="rotate180">
+                        <ul class="tips-content " v-if="haveTheReservedPersonInfo == false">
+                          <li>无数据</li>
+                        </ul>
+                      </div>
+
                       <div class="popover-space" style="width:100%;height:100%;" slot="reference">&nbsp;</div>
                     </el-popover>
                   </div>
@@ -199,53 +202,10 @@ export default {
   data() {
 
     return {
+      filterDateShow: ymsUtil.fmtDate(new Date),
       filterDate: ymsUtil.fmtDate(new Date),
       floorSelect:"1", //1=5, 2=6, 3=7 4=13b5
       deptInfos: [
-        {
-          "code": "212788513",
-          "name": "战略管理中心"
-        },
-        {
-          "code": "58476167",
-          "name": "国内线上运营中心"
-        },
-        {
-          "code": "58476173",
-          "name": "海外线上运营中心"
-        },
-        {
-          "code": "58476172",
-          "name": "财务中心"
-        },
-        {
-          "code": "58476171",
-          "name": "产品与供应链中心"
-        },
-        {
-          "code": "355909505",
-          "name": "全球线下销售中心"
-        },
-        {
-          "code": "58476170",
-          "name": "人力资源中心"
-        },
-        {
-          "code": "312586851",
-          "name": "市场中心"
-        },
-        {
-          "code": "58476174",
-          "name": "流程IT中心"
-        },
-        {
-          "code": "69891083",
-          "name": "法务部"
-        },
-        {
-          "code": "139691268",
-          "name": "内控中心"
-        }
       ],
       seatCategoryInfos:[
         {
@@ -1017,6 +977,8 @@ export default {
 
       ],
       //end of 基础数据
+
+      curSelectCode: -1
     }
   },
   methods: {
@@ -1025,11 +987,24 @@ export default {
       return {
         'active-bg': this.floorSelect == id
       }
+    },
 
+    getTheHitPostion(theClassSty) {
+      if( theClassSty == ""){
+        return "right";
+      } else if( theClassSty == "rotate90")  {
+        return "left";
+      } else if( theClassSty == "rotate180")  {
+        return "top";
+      } else if( theClassSty == "rotate270")  {
+        return "right";
+      }
     },
 
     getRateSty(item) {
-      var classes = {}
+      var classes = {
+        'selected':this.curSelectCode == item.code
+      }
       classes[item.class] = true;
         return classes;
     },
@@ -1159,9 +1134,20 @@ export default {
         }
 
       } else {
+          this.curSelectCode = item.code;
         // request 预定数据 from server
-        that.loadTheReservationStaff(item.code);
+        that.loadTheReservationStaff(item);
         //弹出提示：预定人信息
+
+        // if (item.class == "rotate180") {
+        //   console.log(item.class)
+        //   document.getElementsByClassName("el-popover el-popper")[0].classList.add("my-popo-rotate180");
+        // } else if (item.class == "rotate90") {
+        //   document.getElementsByClassName("el-popover el-popper")[0].classList.add("my-popo-rotate90");
+        // } else  if (item.class == "rotate270"){
+        //   document.getElementsByClassName("el-popover el-popper")[0].classList.add("my-popo-rotate270");
+        // }
+
       }
 
     },
@@ -1262,7 +1248,6 @@ export default {
         } else {
           that.floorData = tt;
 
-
           that.floorSelect = floorSelect;
         }
       }).catch(err => {
@@ -1274,23 +1259,53 @@ export default {
      *
      * 在用户点击座位时
      */
-    loadTheReservationStaff(seatCode) {
+    loadTheReservationStaff(item) {
       const that = this;
-        pcApi.getReservationStaff({selectDate: that.filterDate, code: seatCode}).then(res => {
+        pcApi.getReservationStaff({selectDate: that.filterDate, code: item.code}).then(res => {
           let tt = res.result;
-          if (tt.no == undefined) {
+          if (tt && tt.no == undefined) {
             // that.warig("该预定人信息不存在");
             // that.seatReservedHintInfo = "无数据"
             that.haveTheReservedPersonInfo = false;
           } else {
             that.haveTheReservedPersonInfo = true;
             that.reservedPersonInfo = tt;
+
             //that.seatReservedHintInfo = tt.no+"-"+tt.userName+"-"+tt.departmentName;
           }
+
+          let code = item.code;
+          console.log(code);
+          let x = document.getElementById(code);
+          let x1 = x.firstChild.firstChild;
+
+
+
+          if (item.class == "rotate180") {
+            console.log(item.class)
+            x1.classList.add("my-popo-rotate180");
+            // document.getElementsByClassName("el-popover el-popper")[0].classList.add("my-popo-rotate180");
+            // document.getElementById(item.code).firstChild.firstChild.classList.add("my-popo-rotate180");
+          } else if (item.class == "rotate90") {
+            // document.getElementsByClassName("el-popover el-popper")[0].classList.add("my-popo-rotate90");
+            // document.getElementById(item.code).firstChild.firstChild.classList.add("my-popo-rotate90");
+            x1.classList.add("my-popo-rotate90");
+
+          } else  if (item.class == "rotate270"){
+            // document.getElementsByClassName("el-popover el-popper").classList.add("my-popo-rotate270");
+            // document.getElementById(item.code).firstChild.firstChild.classList.add("my-popo-rotate270");
+            x1.classList.add("my-popo-rotate270");
+          } else {
+            x1.classList.add("my-popo-rotate");
+          }
+
         }).catch(err => {
           // that.error("出错: 加载预定个人信息")
           that.haveTheReservedPersonInfo = false;
           // that.seatReservedHintInfo = "无数据"
+
+
+
         })
     },
 
@@ -1356,7 +1371,8 @@ export default {
     'curSelectSeats.departmentCode' () {
       this.checkHint();
     },
-    filterDate: function ( ) {
+    filterDateShow: function ( ) {
+        this.filterDate = ymsUtil.fmtDate(this.filterDateShow);
         this.loadTheSpecificFloorData(this.floorSelect);
     },
     floorSelect: function ( ) {
@@ -1382,10 +1398,51 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  /*/deep/.el-popper[x-placement^="right"] .popper__arrow {*/
+  /*  left: -8px;*/
+  /*}*/
+  /*/deep/.el-popper[x-placement^="right"] .popper__arrow::after {*/
+  /*  border-right-color: #010101;*/
+  /*  border-width: 8px 8px 8px 0;*/
+  /*  bottom: -8px;*/
+  /*}*/
 
+
+  /*/deep/ .my-popo-rotate{*/
+  /*  left: 11px !important;*/
+  /*}*/
+
+  /*/deep/ .my-popo-rotate180 {*/
+  /*  transform: rotate(180deg);*/
+  /*  top: -28px !important;*/
+  /*}*/
+
+  /*/deep/ .my-popo-rotate90 {*/
+  /*  transform: rotate(270deg);*/
+  /*  left: -88px !important;*/
+  /*}*/
+
+  /*/deep/ .my-popo-rotate270 {*/
+  /*  transform: rotate(90deg);*/
+  /*  left: 6px !important;*/
+  /*}*/
+
+  /deep/.el-popover {
+    min-width: 80px;
+  }
+  /deep/.el-popover--plain {
+    padding: 10px 10px;
+  }
+  .tip-hint-sty {
+    font-size: 0.8rem;
+  }
 
   .my-popo /deep/ .el-popover {
     min-width: 30px;
+  }
+
+  .selected {
+    z-index: 4000;
   }
 
   .clear{
