@@ -119,18 +119,20 @@
                   <div v-for="item in seatBaseInfo10b6" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" @click="whenUserClickTheSeat(item)">
                     <el-popover
                       v-if="editSeat == false"
-                      placement="right"
-                      width="30"
+                      :placement= "getTheHitPostion(item.class)"
+                      width="40"
                       trigger="click"
-                      :content="seatReservedHintInfo">
+                      class="my-popover"
+                      :append-to-body=false
+                    >
                       <ul class="tips-content" v-if="haveTheReservedPersonInfo == true">
-                        <li>{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
-                        <li>{{reservedPersonInfo.departmentName}}</li>
+                        <li class="tip-hint-sty">{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
+                        <li class="tip-hint-sty">{{reservedPersonInfo.departmentName}}</li>
                       </ul>
                       <ul class="tips-content" v-if="haveTheReservedPersonInfo == false">
-                        <li>无数据</li>
+                        <li class="tip-hint-sty">{{item.code}}号-无数据</li>
                       </ul>
-                      <div class="popover-space" style="width:100%;height:100%;" slot="reference">&nbsp;</div>
+                      <div  style="width:100%;height:100%; " slot="reference">&nbsp;</div>
                     </el-popover>
                   </div>
                 </div>
@@ -140,18 +142,19 @@
                     <el-popover
                       v-if="editSeat == false"
                       :placement= "getTheHitPostion(item.class)"
-                      width="30"
+                      width="40"
                       trigger="click"
-                      :content="seatReservedHintInfo">
-
+                      class="my-popover"
+                      :append-to-body=false
+                    >
                       <ul class="tips-content" v-if="haveTheReservedPersonInfo == true">
-                        <li>{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
-                        <li>{{reservedPersonInfo.departmentName}}</li>
+                        <li class="tip-hint-sty">{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
+                        <li class="tip-hint-sty">{{reservedPersonInfo.departmentName}}</li>
                       </ul>
                       <ul class="tips-content" v-if="haveTheReservedPersonInfo == false">
-                        <li>无数据</li>
+                        <li class="tip-hint-sty">{{item.code}}号-无数据</li>
                       </ul>
-                      <div class="popover-space" style="width:100%;height:100%;" slot="reference">&nbsp;</div>
+                      <div  style="width:100%;height:100%; " slot="reference">&nbsp;</div>
                     </el-popover>
                   </div>
                 </div>
@@ -160,22 +163,20 @@
                   <div v-for="item in seatBaseInfo13b5" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)" @click="whenUserClickTheSeat(item)">
                     <el-popover
                       v-if="editSeat == false"
-                      placement="right"
-                      width="30"
+                      :placement= "getTheHitPostion(item.class)"
+                      width="40"
                       trigger="click"
-                      :content="seatReservedHintInfo">
-
+                      class="my-popover"
+                      :append-to-body=false
+                    >
                       <ul class="tips-content" v-if="haveTheReservedPersonInfo == true">
-                        <li>{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
-                        <li>{{reservedPersonInfo.departmentName}}</li>
+                        <li class="tip-hint-sty">{{reservedPersonInfo.userName}}-{{reservedPersonInfo.no}}</li>
+                        <li class="tip-hint-sty">{{reservedPersonInfo.departmentName}}</li>
                       </ul>
-                      <div class="rotate180">
-                        <ul class="tips-content " v-if="haveTheReservedPersonInfo == false">
-                          <li>无数据</li>
-                        </ul>
-                      </div>
-
-                      <div class="popover-space" style="width:100%;height:100%;" slot="reference">&nbsp;</div>
+                      <ul class="tips-content" v-if="haveTheReservedPersonInfo == false">
+                        <li class="tip-hint-sty">{{item.code}}号-无数据</li>
+                      </ul>
+                      <div  style="width:100%;height:100%; " slot="reference">&nbsp;</div>
                     </el-popover>
                   </div>
                 </div>
