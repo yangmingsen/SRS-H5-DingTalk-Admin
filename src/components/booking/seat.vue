@@ -60,14 +60,11 @@
                         :key="item.code"
                         :label="item.name"
                         :value="item.code"
-
                       >
                       </el-option>
                   </el-select>
                  </div>
                   <span v-if="dialogHint.dept" class="my-dialog-hit clear">请选择所属部门</span>
-
-
                 </span>
                 <span slot="footer" class="dialog-footer" >
                   <el-button @click="dialogVisible = false">取 消</el-button>
@@ -93,8 +90,7 @@
             <div class="body-content-right">
               <div class="chooseseat">
                 <div v-if="floorSelect == 1" class="chooseseat-floor choosearea-10B5">
-                  <div :id="item.code" v-for="item in seatBaseInfo10b5" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)"
-                       @click="whenUserClickTheSeat(item)" >
+                  <div :id="item.code" v-for="item in seatBaseInfo10b5" :index="item.code" class="user-seat" :class="getRateSty(item)" :style="getSeatSty(item)"  @click="whenUserClickTheSeat(item)" >
                     <el-popover
                       v-if="editSeat == false"
                       :placement= "getTheHitPostion(item.class)"
@@ -996,15 +992,17 @@ export default {
     },
 
     getTheHitPostion(theClassSty) {
-      if( theClassSty == ""){
-        return "right";
-      } else if( theClassSty == "rotate90")  {
-        return "right";
-      } else if( theClassSty == "rotate180")  {
-        return "right";
-      } else if( theClassSty == "rotate270")  {
-        return "right";
-      }
+
+      return "right";
+      // if( theClassSty == ""){
+      //   return "right";
+      // } else if( theClassSty == "rotate90")  {
+      //   return "right";
+      // } else if( theClassSty == "rotate180")  {
+      //   return "right";
+      // } else if( theClassSty == "rotate270")  {
+      //   return "right";
+      // }
     },
 
     getRateSty(item) {
@@ -1012,6 +1010,15 @@ export default {
         'selected':this.curSelectCode == item.code
       }
       classes[item.class] = true;
+      if (item.class == "rotate180") {
+        classes["my-popo-rotate180"] = true
+      } else if (item.class == "rotate90") {
+        classes["my-popo-rotate90"] = true
+      } else  if (item.class == "rotate270"){
+        classes["my-popo-rotate270"] = true
+      } else {
+        classes["my-popo-rotate"] = true
+      }
         return classes;
     },
     getDeptSty(dept_id) {
@@ -1257,44 +1264,33 @@ export default {
      */
     loadTheReservationStaff(item) {
       const that = this;
-        console.log(that.filterDate+" "+item.code)
         pcApi.getReservationStaff({selectDate: that.filterDate, code: item.code}).then(res => {
           let tt = res.result;
 
-          console.log(JSON.stringify(tt))
+          // let code = item.code;
+          // let x = document.getElementById(code);
+          // let x1 = x.firstChild.firstChild;
+          // if (item.class == "rotate180") {
+          //   x1.classList.add("my-popo-rotate180");
+          // } else if (item.class == "rotate90") {
+          //   x1.classList.add("my-popo-rotate90");
+          // } else  if (item.class == "rotate270"){
+          //   x1.classList.add("my-popo-rotate270");
+          // } else {
+          //   x1.classList.add("my-popo-rotate");
+          // }
 
-          if (tt && tt.no == undefined) {
-            // that.warig("该预定人信息不存在");
-            // that.seatReservedHintInfo = "无数据"
-            that.haveTheReservedPersonInfo = false;
-          } else {
-            that.haveTheReservedPersonInfo = true;
-            that.reservedPersonInfo = tt;
-
-            //that.seatReservedHintInfo = tt.no+"-"+tt.userName+"-"+tt.departmentName;
-          }
-
-          let code = item.code;
-          console.log(code);
-          let x = document.getElementById(code);
-          let x1 = x.firstChild.firstChild;
-
-
-
-          if (item.class == "rotate180") {
-            console.log(item.class)
-            x1.classList.add("my-popo-rotate180");
-
-          } else if (item.class == "rotate90") {
-
-            x1.classList.add("my-popo-rotate90");
-
-          } else  if (item.class == "rotate270"){
-
-            x1.classList.add("my-popo-rotate270");
-          } else {
-            x1.classList.add("my-popo-rotate");
-          }
+          this.$nextTick( () => {
+            if (tt && tt.no == undefined) {
+              // that.warig("该预定人信息不存在");
+              // that.seatReservedHintInfo = "无数据"
+              that.haveTheReservedPersonInfo = false;
+            } else {
+              that.haveTheReservedPersonInfo = true;
+              that.reservedPersonInfo = tt;
+              //that.seatReservedHintInfo = tt.no+"-"+tt.userName+"-"+tt.departmentName;
+            }
+          })
 
         }).catch(err => {
           // that.error("出错: 加载预定个人信息")
@@ -1392,6 +1388,22 @@ export default {
   mounted () {
     document.getElementsByClassName("el-dialog__footer")[0].classList.add("my-button-sty")
     document.getElementsByClassName("el-button el-button--primary")[0].classList.add("my-button-padding-sty")
+    // this.$nextTick( () => {
+    //   var doms = document.getElementsByClassName("user-seat")
+    //   console.log(doms.length)
+    //   for(let i=0; i<doms.length; i++) {
+    //     console.log(doms[i].className)
+    //     if (doms[i].className.indexOf("rotate180") >= 0) {
+    //       doms[i].classList.add("my-popo-rotate180");
+    //     } else if (doms[i].className.indexOf("rotate90") >= 0) {
+    //       doms[i].classList.add("my-popo-rotate90");
+    //     } else  if (doms[i].className.indexOf("rotate270") >= 0){
+    //       doms[i].classList.add("my-popo-rotate270");
+    //     } else {
+    //       doms[i].classList.add("my-popo-rotate");
+    //     }
+    //   }
+    // })
   }
 }
 </script>
@@ -1414,25 +1426,33 @@ export default {
   }
 
   /deep/ .my-popo-rotate{
-    left: 11px !important;
-    top: -10px !important;
+    .el-popover {
+      left: 11px !important;
+      top: -10px !important;
+    }
   }
 
   /deep/ .my-popo-rotate180 {
-    transform: rotate(180deg);
-    top: -10px !important;
-    left: 1px !important;
+    .el-popover {
+      transform: rotate(180deg);
+      top: -10px !important;
+      left: 1px !important;
+    }
   }
 
   /deep/ .my-popo-rotate90 {
-    transform: rotate(-90deg);
-    top: -14px !important;
-    left: 7px !important;
+    .el-popover {
+      transform: rotate(-90deg);
+      top: -14px !important;
+      left: 7px !important;
+    }
   }
 
   /deep/ .my-popo-rotate270 {
-    transform: rotate(90deg);
-    left: 6px !important;
+    .el-popover {
+      transform: rotate(90deg);
+      left: 6px !important;
+    }
   }
 
   /deep/.el-popover {
@@ -1480,10 +1500,6 @@ export default {
     font-size: 1rem;
   }
 
-
-
-
-
   .user-seat {
     /*background-image: url('../assets/images/icon_1.png');*/
     background-repeat: no-repeat;
@@ -1505,6 +1521,8 @@ export default {
   .user-seat.rotate180 {
     transform: rotate(180deg);
   }
+
+
 
   .root {
     background-color: #F8F8F8;
@@ -1536,7 +1554,7 @@ export default {
 
       .header {
         width: 100%;
-        height: 70px;
+        height: 50px;
         position: relative;
         font-size: 1.1rem;
         border-bottom: 1px solid #00AFAA;
@@ -1548,9 +1566,9 @@ export default {
           height: 100%;
         }
         .header-left {
-          margin-top:1px;
+          margin-top:-3px;
           box-sizing: border-box;
-          padding-top: 13px;
+          /*padding-top: 13px;*/
           margin-left: 20px;
           color: #00afa5;
 
@@ -1564,6 +1582,7 @@ export default {
             color: #00afa5;
             padding-left: 5%;
             width: 290px;
+            font-size: 1rem;
 
           }
 
@@ -1580,7 +1599,7 @@ export default {
           .header-right-bt  {
             margin-left: 30px;
             margin-right: 30px;
-            margin-top: 17px;
+            margin-top: -1px;
 
             display: inline-block;
             height: 35px;
