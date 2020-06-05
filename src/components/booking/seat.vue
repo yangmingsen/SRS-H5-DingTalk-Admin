@@ -68,7 +68,7 @@
                 </span>
                 <span slot="footer" class="dialog-footer" >
                   <el-button @click="dialogVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="whenUserClickTheDialogSaveButton()">确 定</el-button>
+                  <el-button type="primary" @click="whenUserClickTheDialogSaveButton()">提 交</el-button>
                 </span>
             </el-dialog>
 
@@ -1704,51 +1704,6 @@ export default {
     background-image: url('../../assets/image/seat/bg-13B-5.png');
   }
 
-
-  //座位所属 -----------------------------------------------------------------
-  /*.belongto-market-ctr { //市场及供应链中心*/
-  /*  background-image: url("../../assets/image/seat/icon_market-ctr.png");*/
-  /*}*/
-
-  /*.belongto-mane-ctr { //战略管理*/
-  /*  background-image: url("../../assets/image/seat/icon_stra-mane-ctr.png");*/
-  /*}*/
-
-  /*.belongto-f-sales-ctr {*/
-  /*  background-image: url("../../assets/image/seat/icon_f-sales-ctr.png");*/
-  /*}*/
-
-  /*.belongto-product-ctr { //产品中心*/
-  /*  background-image: url("../../assets/image/seat/icon_product-ctr.png");*/
-  /*}*/
-
-  /*.belongto-h-sales-ctr {*/
-  /*  background-image: url("../../assets/image/seat/icon_h-sales-ctr.png");*/
-  /*}*/
-
-  /*.belongto-BTL-ctr { //线下*/
-  /*  background-image: url("../../assets/image/seat/icon_BTL-ctr.png");*/
-  /*}*/
-
-  /*.belongto-ip-ctr { //内控*/
-  /*  background-image: url("../../assets/image/seat/icon_ip-ctr.png");*/
-  /*}*/
-
-  /*.belongto-cw-ctr {*/
-  /*  background-image: url("../../assets/image/seat/icon_cw-ctr.png");*/
-  /*}*/
-
-  /*.belongto-it-ctr {*/
-  /*  background-image: url("../../assets/image/seat/icon_it-ctr.png");*/
-  /*}*/
-
-  /*.belongto-hr-ctr {*/
-  /*  background-image: url("../../assets/image/seat/icon_hr-ctr.png");*/
-  /*}*/
-
-  /*.belongto-law-ctr {*/
-  /*  background-image: url("../../assets/image/seat/icon_law-ctr.png");*/
-  /*}*/
 
 
   //座位类型 -----------------------------------------------------------------
